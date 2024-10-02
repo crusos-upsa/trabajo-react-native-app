@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react"
-import {Button, StyleSheet, Text, TextInput, View} from "react-native"
+import {Pressable, StyleSheet, Text, TextInput, View} from "react-native"
 import CheckBox from "expo-checkbox"
 import {TAREAS_EJEMPLO} from "../../constantes.js";
-import {alternarTarea, comprobarTareasCompletas} from "./logica.js";
+import {alternarTareaCompletada, comprobarTareasCompletas} from "./logica.js";
 
 export default function ListaTareas() {
     const [tareas, setTareas] = useState(TAREAS_EJEMPLO)
@@ -13,15 +13,13 @@ export default function ListaTareas() {
         const todasTareasCompletas = comprobarTareasCompletas(tareas)
         setTodoCompleto(todasTareasCompletas)
     }, [tareas])
-    
-    
 
     const gestionarClickEnTarea = (id) => {
-        const nuevaListaTareas = alternarTarea(tareas,id)
+        const nuevaListaTareas = alternarTareaCompletada(tareas, id)
         setTareas(nuevaListaTareas)
     }
 
-    const crearTarea = () => {
+    const crearNuevaTarea = () => {
         if (!nuevaTarea.trim()) {
             return
         }
@@ -35,7 +33,7 @@ export default function ListaTareas() {
         setNuevaTarea('')
     }
 
-    const reiniciarLista = () => {
+    const reiniciarListaDeTareas = () => {
         setTareas(TAREAS_EJEMPLO)
     }
 
@@ -52,16 +50,32 @@ export default function ListaTareas() {
                     </View>
                 ))}
             </View>
-            {todoCompleto && <Text style={styles.completo}>Todo completado</Text>}
+            {todoCompleto && <Text style={styles.completo}>TAREAS COMPLETAS!</Text>}
             <View style={styles.crearTarea}>
-                <TextInput
-                    value={nuevaTarea}
-                    onChangeText={setNuevaTarea}
-                    placeholder="Comprar el pan..."
+                <TextInput style={styles.texto}
+                           value={nuevaTarea}
+                           onChangeText={setNuevaTarea}
+                           placeholder="Comprar el pan..."
                 />
-                <Button title="Crear nueva tarea" onPress={crearTarea}/>
+                <Pressable
+                    style={({pressed}) => [
+                        styles.boton,
+                        pressed && styles.botonPresionado
+                    ]}
+                    onPress={crearNuevaTarea}
+                >
+                    <Text style={styles.botonTexto}>Crear nueva tarea</Text>
+                </Pressable>
             </View>
-            <Button title={"Reiniciar lista"} onPress={reiniciarLista}/>
+            <Pressable
+                style={({pressed}) => [
+                    styles.boton,
+                    pressed && styles.botonPresionado
+                ]}
+                onPress={reiniciarListaDeTareas}
+            >
+                <Text style={styles.botonTexto}>Reiniciar lista</Text>
+            </Pressable>
         </>
     )
 }
@@ -69,7 +83,7 @@ export default function ListaTareas() {
 const styles = StyleSheet.create({
     texto: {
         fontSize: 20,
-        color: 'whitesmoke',
+        color: 'black',
         marginLeft: 10,
     },
     lista: {
@@ -81,14 +95,29 @@ const styles = StyleSheet.create({
     },
     completo: {
         fontSize: 25,
-        color: 'lime',
+        color: 'darkblue',
         marginTop: 20,
+        fontWeight: 'bold',
     },
     crearTarea: {
-        backgroundColor: 'lightblue',
-        width: '75%',
+        backgroundColor: '#ffc0d4',
+        width: 300,
         padding: 10,
         borderRadius: 10,
         margin: 20,
+    },
+    boton: {
+        backgroundColor: 'black',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    botonPresionado: {
+        backgroundColor: 'darkblue',
+    },
+    botonTexto: {
+        color: 'white',
+        fontSize: 16,
     },
 })
